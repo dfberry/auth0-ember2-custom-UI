@@ -28,4 +28,5 @@ For now these are notes - I'll edit for more clarity/description later - just wa
 * add css/js, etc for lock widget to work - not sure what this involves right now 
 * make sure dashboard has 2 major settings for authorized callback urls & allowed origins (cors) - not sure I have these formatted correctly right now
 
-
+# Markdown isn't quite right
+TBD - not using Github flavor at moment
