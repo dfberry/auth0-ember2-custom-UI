@@ -14,14 +14,19 @@ For now these are notes - I'll edit for more clarity/description later - just wa
 * npm install - verify this
 * bower install - verify this
 * ember serve - shows generic/basic ember app - port is 4200
-* ember generate template application - creates handlebars template named application
-* add title and button to /[projectname]/app/templates/application.hbs>
+* create ember app - homepage - ember generate template application - creates handlebars template named application
+* CHECK THIS STEP - this is where I rearranged directories and the next steps were placed above the root ember app - make sure this doesn't happen again
+* create ember component for login - ember generate component auth0-login
+* add login button 
+    <button class="btn btn-primary btn-lg btn-login btn-block" {{ action 'login' }}>Login</button>
+* don't want to use bootstrap because it will just pollute/complicate this for a true beginner but the other ember2 sample uses it - is there a style guide that I need to follow or can I dump bootstrap?
+* change app.hbs to use {{auth0-login}}
 
 
 <h3>auth0 Login via Lock Widget</h3>
 <input id="btn-login" class="btn-login" type="submit" value="Login"/>
 
-
+* create place for auth0 config settings: why do some samples have 2 settings and some have more than 2 and how do I know which I need for my exact auth0 app?
 * add session to ember
 * add route, etc for authenticated request
 * add route, etc for unauthenticated request
