@@ -8,6 +8,7 @@ let App;
 Ember.MODEL_FACTORY_INJECTIONS = true;
 
 App = Ember.Application.extend({
+  session: Ember.inject.service('session'),
   modulePrefix: config.modulePrefix,
   podModulePrefix: config.podModulePrefix,
   Resolver

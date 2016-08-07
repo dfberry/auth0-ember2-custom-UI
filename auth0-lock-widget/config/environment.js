@@ -43,5 +43,10 @@ module.exports = function(environment) {
 
   }
 
+    ENV['auth0-ember-simple-auth'] = {
+      clientID: auth0.auth0_client_id,
+      domain: auth0.auth0_domain
+    }
+
   return ENV;
 };

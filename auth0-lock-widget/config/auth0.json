@@ -1,4 +1,4 @@
 {
-    "client" : "",
-    "app" : ""
+    "auth0_client_id" : "",
+    "auth0_domain" : ""
 }

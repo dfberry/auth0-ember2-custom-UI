@@ -50,9 +50,11 @@ and it also brings in the auth0-lock-widget.css file
 When Ember instantiates a controller, view, or other framework component it can attach a dependency to that component. This is often used to provide services to a set of framework components. -- from http://emberjs.com/api/classes/RegistryProxyMixin.html#method_inject
 
 
-install dev dependencies via npm and save to package.json
-* ember install ember-simple-auth
-* ember install auth0/auth0-ember-simple-auth
+install dev dependencies via npm and save to package.json for authentication
+* ember install ember-simple-auth - 3rd party glue for auth to auth0
+* ember install auth0/auth0-ember-simple-auth - don't install this!!!
+* ember generate authenticator auth0-lock - create authenticator for ember-simple-auth to use - glue to auth0
+* ember generate authorizer jwt - use the node sample to figure this out - create authorizer for ember-simple-auth to use - glue from auth0 (is that right?)
 
 * (good idea but don't use this for now) ember generate scaffold-auth0 - ? where is scaffold-auth0 kept - it only works for that named quickstart but it builds most of the stuff such sample
 * login route
@@ -62,6 +64,10 @@ install dev dependencies via npm and save to package.json
 
 
 * create place for auth0 config settings: why do some samples have 2 settings and some have more than 2 and how do I know which I need for my exact auth0 app? settings are in /app/config/auth0.json and brought into environment.js with require - is there a security reason to not use this method? 
+
+* authenticating session - from ember-simple-auth web site
+For authenticating the session, the session service provides the authenticate method that takes the name of the authenticator to use as well as other arguments depending on specific authenticator used. To define an authenticator, add a new file in app/authenticators and extend one of the authenticators the library comes with
+
 * add session to ember
 * add route, etc for authenticated request
 * add route, etc for unauthenticated request
