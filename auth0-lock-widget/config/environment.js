@@ -1,4 +1,5 @@
 /* jshint node: true */
+var auth0 = require('./auth0.json');
 
 module.exports = function(environment) {
   var ENV = {
