@@ -16,6 +16,8 @@ For now these are notes - I'll edit for more clarity/description later - just wa
 * ember serve - shows generic/basic ember app - port is 4200
 * create ember app - homepage - ember generate template application - creates handlebars template named application
 * CHECK THIS STEP - this is where I rearranged directories and the next steps were placed above the root ember app - make sure this doesn't happen again
+
+### Login component
 * create ember component for login - ember generate component auth0-login
 * add login button 
     <button class="btn btn-primary btn-lg btn-login btn-block" {{ action 'login' }}>Login</button>
@@ -25,6 +27,8 @@ For now these are notes - I'll edit for more clarity/description later - just wa
 
 <h3>auth0 Login via Lock Widget</h3>
 <input id="btn-login" class="btn-login" type="submit" value="Login"/>
+
+* make sure test passes for login text - just to make sure any tests pass
 
 * create place for auth0 config settings: why do some samples have 2 settings and some have more than 2 and how do I know which I need for my exact auth0 app?
 * add session to ember
