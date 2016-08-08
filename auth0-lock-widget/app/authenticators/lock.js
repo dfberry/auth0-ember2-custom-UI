@@ -204,23 +204,42 @@ export default BaseAuthenticator.extend({
           this.onAuthError(err);
         } else {
           var sessionData = { profile, jwt, accessToken, refreshToken };
-          this.afterAuth(sessionData).then(response => res(this._setupFutureEvents(response)));
+          Ember.Logger.info("lock.js::authenticate - sessionData = " + JSON.stringify(sessionData));
+
+          // changed the arrow function to we can see the response
+          this.afterAuth(sessionData, function(response){
+            res(this._setupFutureEvents(response))
+            Ember.Logger.info("lock.js::authenticate - afterAuth, response = " + JSON.stringify(response));
+          });
         }
       });
     });
   },
 
   invalidate (/* data */) {
+    Ember.Logger.info("lock.js::invalidate");
+
     if (this.get('hasRefreshToken')) {
+
+      Ember.Logger.info("lock.js::invalidate - hasRefreshToken");
+
       var domain = this.get('domain'),
           userID = this.get('userID'),
           refreshToken = this.get('refreshToken'),
           url = `https://${domain}/api/users/${userID}/refresh_tokens/${refreshToken}`;
 
+      Ember.Logger.info("lock.js::invalidate - domain = " + domain);
+      Ember.Logger.info("lock.js::invalidate - userID = " + userID);
+      Ember.Logger.info("lock.js::invalidate - refreshToken = " + refreshToken);
+      Ember.Logger.info("lock.js::invalidate - url = " + url);
+
+
       return this._makeAuth0Request(url, "DELETE").then(() => {
+        Ember.Logger.info("lock.js::invalidate - DELETE");
         return this.beforeExpire();
       });
     } else {
+      Ember.Logger.info("lock.js::invalidate - !hasRefreshToken");
       return this.beforeExpire();
     }
   },
@@ -229,8 +248,14 @@ export default BaseAuthenticator.extend({
   // Overrides
   //=======================
   init () {
+
+
     var applicationConfig = getOwner(this).resolveRegistration('config:environment');
     var config = applicationConfig['auth0-ember-simple-auth'];
+
+    Ember.Logger.info("lock.js::init - applicationConfig = " + JSON.stringify(applicationConfig));
+
+    Ember.Logger.info("lock.js::init - config = " + JSON.stringify(config));
 
     this.set('_config', config);
 
@@ -249,11 +274,21 @@ export default BaseAuthenticator.extend({
   // Private Methods
   //=======================
   _makeAuth0Request (url, method) {
+
+    Ember.Logger.info("lock.js::_makeAuth0Request, url = " + url);
+    Ember.Logger.info("lock.js::_makeAuth0Request, method = " + method);
+
     var headers = {'Authorization':'Bearer ' + this.get('jwt')};
+
+    Ember.Logger.info("lock.js::_makeAuth0Request, headers = " + JSON.stringify(headers));
+
     return Ember.$.ajax(url, {type:method, headers:headers});
   },
 
   _setupFutureEvents (data) {
+
+    Ember.Logger.info("lock.js::_setupFutureEvents, data = " + JSON.stringify(data));
+
     this.get('sessionData').setProperties(data);
     this._clearJobs();
     this._scheduleExpire();
@@ -266,6 +301,9 @@ export default BaseAuthenticator.extend({
   },
 
   _scheduleRefresh () {
+
+    Ember.Logger.info("lock.js::_scheduleRefresh");
+
     Ember.run.cancel(this.get('_refreshJob'));
 
     var remaining = this._jwtRemainingTime();
@@ -280,6 +318,7 @@ export default BaseAuthenticator.extend({
   },
 
   _scheduleExpire () {
+    Ember.Logger.info("lock.js::_scheduleExpire");
     Ember.run.cancel(this.get('_expireJob'));
     var expireInMilli = this._jwtRemainingTime()*1000;
     var job = Ember.run.later(this, this._processSessionExpired, expireInMilli);
@@ -287,18 +326,26 @@ export default BaseAuthenticator.extend({
   },
 
   _clearJobs () {
+    Ember.Logger.info("lock.js::_clearJobs");
     Ember.run.cancel(this.get('_expireJob'));
     Ember.run.cancel(this.get('_refreshJob'));
   },
 
   _processSessionExpired () {
+    Ember.Logger.info("lock.js::_processSessionExpired");    
     this.beforeExpire().then(() => this.trigger('sessionDataInvalidated'));
   },
 
   _refreshAuth0Token () {
+
+    Ember.Logger.info("lock.js::_refreshAuth0Token");
+
     return new Ember.RSVP.Promise((res, rej) => {
       this.get('lock').getClient()
         .refreshToken(this.get('refreshToken'), (err, result) => {
+
+  	    Ember.Logger.info("lock.js::_refreshAuth0Token - result.id_token = " + result.id_token);
+
           if(err){
             rej(err);
           }else{
@@ -312,6 +359,7 @@ export default BaseAuthenticator.extend({
   },
 
   _refreshAccessToken () {
+    Ember.Logger.info("lock.js::_refreshAccessToken");
     this._refreshAuth0Token().then(data => this.trigger('sessionDataUpdated', data));
   },
 
@@ -321,6 +369,7 @@ export default BaseAuthenticator.extend({
   _extractExpireTime (jwt) {
     var claim = b64utos(jwt.split(".")[1]);
     var decoded = KJUR.jws.JWS.readSafeJSONString(claim);
+    Ember.Logger.info("lock.js::_extractExpireTime = " + decoded.exp);
     return decoded.exp;
   },
 
@@ -329,7 +378,11 @@ export default BaseAuthenticator.extend({
       return 0;
     }else{
       var currentTime = (new Date().getTime()/1000);
-      return this.get('expiresIn') - currentTime;
+      var remainingTime = this.get('expiresIn') - currentTime;
+
+      Ember.Logger.info("lock.js::_jwtRemainingTime = " + remainingTime);
+
+      return remainingTime;
     }
   }
 });

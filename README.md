@@ -115,3 +115,60 @@ Signature
 JSON Web Tokens are an open, industry standard RFC 7519 method for representing claims securely between two parties.
 
 JWT.IO allows you to decode, verify and generate JWT.
+
+# Rewrite - layout of material 
+
+## Installs
+* install npm ember-simple-auth
+* install bower auth0-lock
+* install bower jsrasign
+
+## Configs
+
+### auth0
+* file for auth0 configs
+* pull in auth0 config file into config/environment
+
+ENV['auth0-ember-simple-auth'] = {
+    clientID: auth0.auth0_client_id,
+    domain: auth0.auth0_domain
+}
+
+### CORS - cross site
+config/environment
+
+ENV['contentSecurityPolicy'] = {
+  'font-src': "'self' data: https://*.bootstrapcdn.com http://*.auth0.com https://*.auth0.com",
+  'style-src': "'self' 'unsafe-inline' https://*.bootstrapcdn.com http://*.auth0.com https://*.auth0.com",
+  'script-src': "'self' 'unsafe-eval' 'unsafe-inline' https://*.auth0.com http://*.auth0.com",
+  'img-src': "'self' 'https://*.gravatar.com data: https://*.gravatar.com  http://*.auth0.com",
+  'connect-src': "'self' http://*.auth0.com https://*.auth0.com"
+};
+
+### ember-simple-auth
+ENV['ember-simple-auth'] = {
+  authenticationRoute: 'index',
+  routeAfterAuthentication: 'protected',
+  routeIfAlreadyAuthenticated: 'protected'
+} 
+
+## Authenticator/Authorizer
+Create files using 'ember generate authenticator lock' and 'ember generate authorizor jwt'
+
+### lock.js from https://github.com/auth0/auth0-ember-simple-auth/tree/master/addon
+???do we need to generate the file in order for ember to find it
+uses the auth0-lock installed from bower
+ember generate authenticator lock 
+copy lock.js from https://github.com/auth0/auth0-ember-simple-auth/tree/master/addon/authenticator/lock.js
+consider this a base file, extend it but don't change it
+
+
+### jwt.js from https://github.com/auth0/auth0-ember-simple-auth/tree/master/addon
+???do we need to generate the file in order for ember to find it
+ember generate authorizer jwt
+copy jwt.js from https://github.com/auth0/auth0-ember-simple-auth/tree/master/addon/authenticator/lock.js
+
+## Routes in router.js
+/login 
+/protected
+
