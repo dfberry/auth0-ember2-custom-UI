@@ -19,6 +19,14 @@ module.exports = function(defaults) {
   // modules that you would like to import into your application
   // please specify an object with the list of modules as keys
   // along with the exports of each module as its value.
+  
+  
+  // bring in the auth0 widget js library
   app.import(app.bowerDirectory + '/auth0-lock/build/lock.min.js');
+
+  // bring in library to encrypt JSON webtoken
+  app.import(app.bowerDirectory + '/jsrsasign/jsrsasign-latest-all-min.js');
+
+
   return app.toTree();
 };

@@ -15,6 +15,7 @@ For now these are notes - I'll edit for more clarity/description later - just wa
 * bower install - verify this
 * ember serve - shows generic/basic ember app - port is 4200
 * create ember app - homepage - ember generate template application - creates handlebars template named application
+* ember generate template application
 
 
 * CHECK THIS STEP - this is where I rearranged directories and the next steps were placed above the root ember app - make sure this doesn't happen again
@@ -56,6 +57,12 @@ install dev dependencies via npm and save to package.json for authentication
 * ember generate authenticator auth0-lock - create authenticator for ember-simple-auth to use - glue to auth0
 * ember generate authorizer jwt - use the node sample to figure this out - create authorizer for ember-simple-auth to use - glue from auth0 (is that right?)
 
+* enable cors in ember's config/environment.js file
+  ENV['contentSecurityPolicy'] = {
+    'connect-src': "'self' http://localhost:4200 [AUTH0_DOMAIN] "
+  }; 
+
+
 * (good idea but don't use this for now) ember generate scaffold-auth0 - ? where is scaffold-auth0 kept - it only works for that named quickstart but it builds most of the stuff such sample
 * login route
 * protected route
@@ -68,6 +75,10 @@ install dev dependencies via npm and save to package.json for authentication
 * authenticating session - from ember-simple-auth web site
 For authenticating the session, the session service provides the authenticate method that takes the name of the authenticator to use as well as other arguments depending on specific authenticator used. To define an authenticator, add a new file in app/authenticators and extend one of the authenticators the library comes with
 
+* TBD - https://github.com/auth0/auth0-ember-simple-auth - this repo has some good stuff but appears to be broken right now - I would pull out the addon directory files (addon/authenticators/lock.js & addon/authorizers/jwt.js) as those are the hard bits to figure out - then leave the rest of the files in a separate example repo that is managed more frequently. The addon code shouldn't change except for ember's addon architecture or the ember-simple-auth changing. The addon code is really glue code and should be in an Ember SDK instead of in a sample for ember.
+
+* TBD - why does the old ember2 quickstart stick the authenticator and authorizer in the registry for the app? It hides the process for the reader. 
+
 * add session to ember
 * add route, etc for authenticated request
 * add route, etc for unauthenticated request
@@ -79,5 +90,28 @@ TBD - not using Github flavor at moment
 
 # oauth libraries for ember
 * https://github.com/simplabs/ember-cli-simple-auth-oauth2 - deprecated - use Ember Simple Auth OAuth instead
+* https://github.com/simplabs/ember-simple-auth - last commit 5 days ago - currently library of choice
 * https://github.com/amkirwan/ember-oauth2 - last commit Jan 16
 * https://github.com/amkirwan/ember-token-auth - last commit Jan 16
+* https://github.com/Vestorly/torii - last commit 9 days ago
+
+list of authentication libraries ranked for ember: https://emberobserver.com/categories/authentication
+
+compare ember-simple-auth to torii on npm 
+
+ember-simple-auth has more downloads and is updated more often and fewer open issues
+
+https://www.npmjs.com/package/ember-simple-auth
+https://www.npmjs.com/package/torii
+
+## Testing Doc and API 
+To help with testing the doc and sample where an API is called, please take a look at our NodeJS authentication sample: https://github.com/auth0-blog/nodejs-jwt-authentication-sample
+
+JWT = JSON Web Tokens consist of three parts separated by dots (.), which are:
+Header
+Payload
+Signature
+
+JSON Web Tokens are an open, industry standard RFC 7519 method for representing claims securely between two parties.
+
+JWT.IO allows you to decode, verify and generate JWT.

@@ -1,4 +1,7 @@
 /* jshint node: true */
+
+// auth0 configuration information brought into 
+// ember's environment configuration 
 var auth0 = require('./auth0.json');
 
 module.exports = function(environment) {
@@ -43,10 +46,28 @@ module.exports = function(environment) {
 
   }
 
-    ENV['auth0-ember-simple-auth'] = {
+  ENV['ember-simple-auth'] = {
+    authenticationRoute: 'index',
+    routeAfterAuthentication: 'protected',
+    routeIfAlreadyAuthenticated: 'protected'
+  }  
+
+  // this is used by the authenticators/lock.js
+  ENV['auth0-ember-simple-auth'] = {
       clientID: auth0.auth0_client_id,
       domain: auth0.auth0_domain
-    }
+  }
 
+  // CORS support in Ember
+  // this is more than we need right now - should this be tightened? 
+  // make sure all subdomains for both http and https are available for auth0
+  // make sure self is also available
+  ENV['contentSecurityPolicy'] = {
+    'font-src': "'self' data: https://*.bootstrapcdn.com http://*.auth0.com https://*.auth0.com",
+    'style-src': "'self' 'unsafe-inline' https://*.bootstrapcdn.com http://*.auth0.com https://*.auth0.com",
+    'script-src': "'self' 'unsafe-eval' 'unsafe-inline' https://*.auth0.com http://*.auth0.com",
+    'img-src': "'self' 'https://*.gravatar.com data: https://*.gravatar.com  http://*.auth0.com",
+    'connect-src': "'self' http://*.auth0.com https://*.auth0.com"
+  }; 
   return ENV;
 };
