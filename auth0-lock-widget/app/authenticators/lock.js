@@ -183,6 +183,9 @@ export default BaseAuthenticator.extend({
   },
 
   restore (data) {
+
+    Ember.Logger.info("lock.js::restore data = " + JSON.stringify(data));
+
     this.get('sessionData').setProperties(data);
 
     if(this._jwtRemainingTime() < 1){
@@ -199,6 +202,9 @@ export default BaseAuthenticator.extend({
 
   authenticate (options) {
     return new Ember.RSVP.Promise((res) => {
+
+      Ember.Logger.info("lock.js::authenticate");
+
       this.get('lock').show(options, (err, profile, jwt, accessToken, state, refreshToken) => {
         if (err) {
           this.onAuthError(err);
@@ -208,8 +214,9 @@ export default BaseAuthenticator.extend({
 
           // changed the arrow function to we can see the response
           this.afterAuth(sessionData, function(response){
-            res(this._setupFutureEvents(response))
             Ember.Logger.info("lock.js::authenticate - afterAuth, response = " + JSON.stringify(response));
+            res(this._setupFutureEvents(response));
+            
           });
         }
       });
