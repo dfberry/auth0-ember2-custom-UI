@@ -1,7 +1,8 @@
-/* globals Auth0Lock, b64utos, KJUR */
+/* globals b64utos, KJUR */
 import Ember from 'ember';
 import BaseAuthenticator from 'ember-simple-auth/authenticators/base';
 import getOwner from 'ember-getowner-polyfill';
+import Auth0 from 'npm:auth0-js';
 
 var read = Ember.computed.readOnly,
     bool = Ember.computed.bool;
@@ -27,10 +28,10 @@ export default BaseAuthenticator.extend({
   config: read('_config'),
 
   /**
-   * Auth0 Lock Instance
-   * @type {Auth0Lock}
+   * Auth0 auth0 Instance
+   * @type {Auth0auth0}
    */
-  lock: read('_lock'),
+    auth0: read('_auth0'),
 
   /**
    * The Auth0 App ClientID found in your Auth0 dashboard
@@ -43,6 +44,12 @@ export default BaseAuthenticator.extend({
    * @type {String}
    */
   domain: read('_domain'),
+
+  /**
+   * The Auth0 callback url found in your Auth0 dashboard
+   * @type {String}
+   */
+  callbackUrl: read('_callbackUrl'),  
 
   /**
    * The auth0 userID.
@@ -134,7 +141,7 @@ export default BaseAuthenticator.extend({
    * Hook called after auth0 refreshes the jwt
    * based on the refreshToken.
    *
-   * This only fires if lock.js was passed in
+   * This only fires if auth0.js was passed in
    * the offline_mode scope params
    *
    * IMPORTANT: You must return a promise with the
@@ -192,65 +199,45 @@ export default BaseAuthenticator.extend({
         .then(response => Ember.RSVP.resolve(this._setupFutureEvents(response)));
     }
   },
-/*
-{
-    "authenticated": {
-        "authenticator": "simple-auth-authenticator:lock",
-        "profile": {
-            "name": "Dina Fleet Berry",
-            "given_name": "Dina",
-            "family_name": "Fleet Berry",
-            "locale": "en_US",
-            "email_verified": false,
-            "picture": "https://apis.live.net/v5.0/6f585622ca55c30f/picture",
-            "clientID": "wZWpDqwuXUAMGS1xjkUgmVL07yNkPOZm",
-            "updated_at": "2016-08-09T12:31:19.188Z",
-            "user_id": "windowslive|6f585622ca55c30f",
-            "nickname": "Dina Fleet Berry",
-            "identities": [
-                {
-                    "provider": "windowslive",
-                    "user_id": "6f585622ca55c30f",
-                    "connection": "windowslive",
-                    "isSocial": true
-                }
-            ],
-            "created_at": "2016-08-09T03:27:49.704Z",
-            "global_client_id": "QTXqtGLdBw9vmLq3VRchyarjVhV84yhx"
-        },
-        "jwt": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL2RmYmVycnkuYXV0aDAuY29tLyIsInN1YiI6IndpbmRvd3NsaXZlfDZmNTg1NjIyY2E1NWMzMGYiLCJhdWQiOiJ3WldwRHF3dVhVQU1HUzF4amtVZ21WTDA3eU5rUE9abSIsImV4cCI6MTQ3MDc4MTg3OSwiaWF0IjoxNDcwNzQ1ODc5fQ.oWIZWOG_ruv2yyvHcYLUGAujaGN_vWi3gxm1-Q76Mgg"
-    }
-}
-*/
+
 // FIX - doesn't work on first validation but does work on second
-  authenticate () {
+  authenticate (config) {
 
     return new Ember.RSVP.Promise((res) => {
 
-      var mylock = this.get('lock');
-      mylock.show();
+      var myauth0 = this.get('auth0');
 
-      mylock.on("authenticated", function(authResult) {
+/*
+connection: windowslive, db-conn
 
-        //deep copy
-        //var thisAuthResult = JSON.parse(JSON.stringify(authResult));
-
-        // Use the token in authResult to getProfile() and save it to localStorage
-        mylock.getProfile(authResult.idToken, function(error, profile) {
-            if (error) {
-            // Handle error
-              return error;
-            }
-            authResult['profile'] = profile;
-            Ember.Logger.info(authResult);
-
-            //localStorage.setItem('authenticateResult', JSON.stringify(thisAuthResult));
-
-            res({profile:profile, jwt: authResult.idToken});
-          });
-      });
-      mylock.on('authorization_error', function(error){
-        res(error);
+      // trying to pass user & password
+      // does that only work with db-conn
+      myauth0.login({
+        connection: config.connection,
+        username:   config.username,
+        password:   config.password,
+        scope: 'openid offline_access'
+      },
+*/
+      myauth0.login({
+          connection: 'db-conn',
+          username: 'dinaberry@outlook.com',
+          password:'1234',
+          scope: 'openid offline_access'
+      },
+      function (err, result) {
+        if(err){
+          Ember.Logging.Info(err);
+          res(err);
+        }
+          Ember.Logging.Info(result);
+          //Ember.Logging.Info(id_token);
+          //Ember.Logging.Info(access_token);
+          //Ember.Logging.Info(state);
+          //Ember.Logging.Info(refresh_token);
+          
+          //res({profile:profile, jwt: id_token});
+          res();
       });
     });
   },
@@ -283,10 +270,16 @@ export default BaseAuthenticator.extend({
 
     this.set('_clientID', config.clientID);
     this.set('_domain', config.domain);
+    this.set('_callbackUrl', config.callbackUrl);
 
-    var lock = new Auth0Lock(this.get('clientID'), this.get('domain'));
+    var auth0 = new Auth0({
+      clientID: this.get('clientID'), 
+      domain: this.get('domain'),
+      callbackURL: this.get('callbackUrl'),
+      callbackOnLocationHash: true
+    });
   
-    this.set('_lock', lock);
+    this.set('_auth0', auth0);
     this._super();
   },
 
@@ -347,8 +340,7 @@ export default BaseAuthenticator.extend({
 
   _refreshAuth0Token () {
     return new Ember.RSVP.Promise((res, rej) => {
-      this.get('lock').getClient()
-        .refreshToken(this.get('refreshToken'), (err, result) => {
+      this.get('auth0').renewIdToken(this.get('jwt'), (err, result) => {
           if(err){
             rej(err);
           }else{
@@ -383,3 +375,4 @@ export default BaseAuthenticator.extend({
     }
   }
 });
+

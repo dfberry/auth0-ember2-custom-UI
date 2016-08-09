@@ -35,6 +35,11 @@ For now these are notes - I'll edit for more clarity/description later - just wa
 * ember generate route login
 * ember generate controller app
 
+
+# specific to auth0-js
+* npm install ember-browserify --save-dev
+* npm install auth0-js --save
+
 * change templates
 * add session to controller
 * add auth0 config info

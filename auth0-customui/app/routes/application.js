@@ -8,10 +8,14 @@ export default Ember.Route.extend(ApplicationRouteMixin, {
         Ember.Logger.info("application.js::login action");
 
         // 'scope' is one of several oauth properties that need to be sent for oauth validation
-        var lockOptions = {authParams:{scope: 'openid'}};
+        var options = {
+          connection: 'windowslive',
+          username: 'dinaberry@outlook.com',
+          password: '1thimble'
+        };
 
         // pass session to the authenticator named 'lock', along with options
-        this.get('session').authenticate('simple-auth-authenticator:lock', lockOptions);
+        this.get('session').authenticate('simple-auth-authenticator:auth0', options);
     },
 
     logout () {

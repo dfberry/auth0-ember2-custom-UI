@@ -1,0 +1,9 @@
+var AUTH0_CLIENT_ID='wZWpDqwuXUAMGS1xjkUgmVL07yNkPOZm';
+var AUTH0_DOMAIN='dfberry.auth0.com';
+var AUTH0_CALLBACKURL='http://localhost:4200/protected';
+
+module.exports = {
+  AUTH0_CLIENT_ID: AUTH0_CLIENT_ID,
+  AUTH0_DOMAIN: AUTH0_DOMAIN,
+  AUTH0_CALLBACKURL:AUTH0_CALLBACKURL
+} 

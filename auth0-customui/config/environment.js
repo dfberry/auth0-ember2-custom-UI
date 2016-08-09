@@ -52,10 +52,11 @@ module.exports = function(environment) {
     routeIfAlreadyAuthenticated: 'protected'
   }  
 
-  // this is used by the authenticators/lock.js
+  // this is used by the authenticators/auth0.js
   ENV['auth0-ember-simple-auth'] = {
     clientID: auth0Config.AUTH0_CLIENT_ID,
-    domain: auth0Config.AUTH0_DOMAIN
+    domain: auth0Config.AUTH0_DOMAIN,
+    callbackUrl: auth0Config.AUTH0_CALLBACKURL
   }
 
   // CORS support in Ember
