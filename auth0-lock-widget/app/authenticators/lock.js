@@ -192,7 +192,37 @@ export default BaseAuthenticator.extend({
         .then(response => Ember.RSVP.resolve(this._setupFutureEvents(response)));
     }
   },
-
+/*
+{
+    "authenticated": {
+        "authenticator": "simple-auth-authenticator:lock",
+        "profile": {
+            "name": "Dina Fleet Berry",
+            "given_name": "Dina",
+            "family_name": "Fleet Berry",
+            "locale": "en_US",
+            "email_verified": false,
+            "picture": "https://apis.live.net/v5.0/6f585622ca55c30f/picture",
+            "clientID": "wZWpDqwuXUAMGS1xjkUgmVL07yNkPOZm",
+            "updated_at": "2016-08-09T12:31:19.188Z",
+            "user_id": "windowslive|6f585622ca55c30f",
+            "nickname": "Dina Fleet Berry",
+            "identities": [
+                {
+                    "provider": "windowslive",
+                    "user_id": "6f585622ca55c30f",
+                    "connection": "windowslive",
+                    "isSocial": true
+                }
+            ],
+            "created_at": "2016-08-09T03:27:49.704Z",
+            "global_client_id": "QTXqtGLdBw9vmLq3VRchyarjVhV84yhx"
+        },
+        "jwt": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL2RmYmVycnkuYXV0aDAuY29tLyIsInN1YiI6IndpbmRvd3NsaXZlfDZmNTg1NjIyY2E1NWMzMGYiLCJhdWQiOiJ3WldwRHF3dVhVQU1HUzF4amtVZ21WTDA3eU5rUE9abSIsImV4cCI6MTQ3MDc4MTg3OSwiaWF0IjoxNDcwNzQ1ODc5fQ.oWIZWOG_ruv2yyvHcYLUGAujaGN_vWi3gxm1-Q76Mgg"
+    }
+}
+*/
+// FIX - doesn't work on first validation but does work on second
   authenticate () {
 
     return new Ember.RSVP.Promise((res) => {
@@ -214,17 +244,14 @@ export default BaseAuthenticator.extend({
             thisAuthResult['profile'] = profile;
             Ember.Logger.info(thisAuthResult);
 
-            localStorage.setItem('authenticateResult', JSON.stringify(thisAuthResult));
-            //this.get('sessionData').set('profile', profile);
-            //this.get('sessionData').set('jwt', authResult.idToken);
-            //return profile;
+            //localStorage.setItem('authenticateResult', JSON.stringify(thisAuthResult));
+
             res({profile:profile, jwt: authResult.idToken});
           });
-      });/*
+      });
       mylock.on('authorization_error', function(error){
-        this.onAuthError(error);
-      });*/
-   
+        res(error);
+      });
     });
   },
 
