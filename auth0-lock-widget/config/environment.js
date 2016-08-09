@@ -2,7 +2,7 @@
 
 // auth0 configuration information brought into 
 // ember's environment configuration 
-var auth0 = require('./auth0.json');
+var auth0Config = require('./auth0.js');
 
 module.exports = function(environment) {
   var ENV = {
@@ -54,8 +54,8 @@ module.exports = function(environment) {
 
   // this is used by the authenticators/lock.js
   ENV['auth0-ember-simple-auth'] = {
-      clientID: auth0.auth0_client_id,
-      domain: auth0.auth0_domain
+    clientID: auth0Config.AUTH0_CLIENT_ID,
+    domain: auth0Config.AUTH0_DOMAIN
   }
 
   // CORS support in Ember
@@ -66,7 +66,7 @@ module.exports = function(environment) {
     'font-src': "'self' data: https://*.bootstrapcdn.com http://*.auth0.com https://*.auth0.com",
     'style-src': "'self' 'unsafe-inline' https://*.bootstrapcdn.com http://*.auth0.com https://*.auth0.com",
     'script-src': "'self' 'unsafe-eval' 'unsafe-inline' https://*.auth0.com http://*.auth0.com",
-    'img-src': "'self' 'https://*.gravatar.com data: https://*.gravatar.com  http://*.auth0.com",
+    'img-src': "'self' https://*.gravatar.com data: https://*.gravatar.com  http://*.auth0.com",
     'connect-src': "'self' http://*.auth0.com https://*.auth0.com"
   }; 
   return ENV;

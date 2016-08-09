@@ -11,7 +11,7 @@ export default Ember.Route.extend(ApplicationRouteMixin, {
         var lockOptions = {authParams:{scope: 'openid'}};
 
         // pass session to the authenticator named 'lock', along with options
-        this.get('session').authenticate('authenticator:lock', lockOptions);
+        this.get('session').authenticate('simple-auth-authenticator:lock', lockOptions);
     },
 
     logout () {
