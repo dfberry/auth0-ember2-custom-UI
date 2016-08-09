@@ -233,7 +233,7 @@ export default BaseAuthenticator.extend({
       mylock.on("authenticated", function(authResult) {
 
         //deep copy
-        var thisAuthResult = JSON.parse(JSON.stringify(authResult));
+        //var thisAuthResult = JSON.parse(JSON.stringify(authResult));
 
         // Use the token in authResult to getProfile() and save it to localStorage
         mylock.getProfile(authResult.idToken, function(error, profile) {
@@ -241,8 +241,8 @@ export default BaseAuthenticator.extend({
             // Handle error
               return error;
             }
-            thisAuthResult['profile'] = profile;
-            Ember.Logger.info(thisAuthResult);
+            authResult['profile'] = profile;
+            Ember.Logger.info(authResult);
 
             //localStorage.setItem('authenticateResult', JSON.stringify(thisAuthResult));
 
